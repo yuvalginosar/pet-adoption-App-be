@@ -1,0 +1,35 @@
+{
+  "name": "fs_pet_adoption_be-yuvalginosar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/israeltechchallenge/fs_pet_adoption_be-yuvalginosar.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/israeltechchallenge/fs_pet_adoption_be-yuvalginosar/issues"
+  },
+  "homepage": "https://github.com/israeltechchallenge/fs_pet_adoption_be-yuvalginosar#readme",
+  "dependencies": {
+    "ajv": "^8.11.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "knex": "^1.0.7",
+    "mysql": "^2.18.1",
+    "uuid": "^8.3.2"
+  },
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
