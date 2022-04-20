@@ -48,11 +48,28 @@ function AlterAdoptionStatus(action) {
       }
     return adoption_status
 }
-async function addPetToUser(aloPet) {
-    try{    
-        const queryResult  = await petsAppDb.from('user_pets').insert(aloPet)
+async function addPetToUser(aloPet, currStatus) {
+    try{  
+        console.log(currStatus)
         const petMod = await petsAppDb.from('pets').where({id: aloPet.petid}).update({adoption_status: AlterAdoptionStatus(aloPet.status)})
-        return queryResult 
+        if (!currStatus){
+            const queryResult  = await petsAppDb.from('user_pets').insert(aloPet)
+            return queryResult 
+        }
+        else {
+            const queryResult  = await petsAppDb.from('user_pets').where({petid: aloPet.petid, userid: aloPet.userid}).update({status: aloPet.status})
+            return queryResult 
+
+        }
+    } catch(err){
+        console.log(err)
+    }
+}
+
+async function RemovePetFromUser(petId, userId) {
+    try{  
+        const petMod = await petsAppDb.from('pets').where({id: petId}).update({adoption_status: 'Available'})
+        const queryResult  = await petsAppDb.from('user_pets').where({petid:petId, userid: userId}).del()
     } catch(err){
         console.log(err)
     }
@@ -69,5 +86,23 @@ async function GetPetsByUserId(userId) {
         console.log(err)
     }
 }
+async function addSavedPetToUser(savePetDetails) {
+    try{    
+        const queryResult  = await petsAppDb.from('user_pets').insert(savePetDetails)
+        return queryResult 
+    } catch(err){
+        console.log(err)
+    }
+}
 
-export default {addPet, GetPets, addPetToUser, GetPetsByUserId}
+async function removeSavedPet(petToDelete) {
+    console.log(petToDelete)
+    try{    
+        console.log(petToDelete.petId, petToDelete.userId)
+        const queryResult  = await petsAppDb.from('user_pets').where({petid: petToDelete.petId, userid: petToDelete.userId}).del()
+        return queryResult 
+    } catch(err){
+        console.log(err)
+    }
+}
+export default {addPet, GetPets, addPetToUser, GetPetsByUserId, addSavedPetToUser, removeSavedPet, RemovePetFromUser}

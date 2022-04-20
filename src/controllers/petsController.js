@@ -46,6 +46,7 @@ async function fetchPetById(req, res, next) {
         const pet = await petsModel.GetPets({'pets.id': id})
         res.send(pet)
     } catch (err) {
+    
         next(err)
     }
 }
@@ -54,14 +55,15 @@ async function adoptOrFoster(req, res, next) {
         const petid = req.params.id
         const userid = req.body.id
         const type = req.body.type
+        const currStatus = req.body.curPetStatus
         const aloPet = {
             userid,
             petid,
-            status: type
+            status: type,
         }
-        console.log(petid, userid, type)
-        const action = await petsModel.addPetToUser(aloPet)
-        res.send({petid, userid, adoption_status: type})
+        console.log(petid, userid, currStatus)
+        const action = await petsModel.addPetToUser(aloPet, currStatus)
+        res.send({action})
     } catch (err) {
         next(err)
     }
@@ -69,8 +71,10 @@ async function adoptOrFoster(req, res, next) {
 
 async function returnPet(req, res, next) {
     try{
-        const newPet = JSON.stringify(req.body)
-        res.send(newPet)
+        const petId = req.params.id
+        const userId = req.body.id
+        const action = await petsModel.RemovePetFromUser(petId, userId)
+        res.send('returned succefully')
     } catch (err) {
         next(err)
     }
@@ -78,8 +82,17 @@ async function returnPet(req, res, next) {
 
 async function savePet(req, res, next) {
     try{
-        const newPet = JSON.stringify(req.body)
-        res.send(newPet)
+
+        const petid = req.params.id
+        const userid = req.body.id
+        const savePetDetails = {
+            userid,
+            petid,
+            status: 'save'
+        }
+        console.log(savePetDetails)
+        const action = await petsModel.addSavedPetToUser(savePetDetails)
+        res.send({petid, userid})
     } catch (err) {
         next(err)
     }
@@ -87,8 +100,15 @@ async function savePet(req, res, next) {
 
 async function deleteSavedPet(req, res, next) {
     try{
-        const newPet = JSON.stringify(req.body)
-        res.send(newPet)
+        const petId = req.params.id
+        const userId = req.body.id
+        console.log(userId)
+        const petToDelete = {
+            petId,
+            userId
+        }
+        const action = await petsModel.removeSavedPet(petToDelete)
+        res.send({petId, userId})
     } catch (err) {
         next(err)
     }
@@ -97,13 +117,13 @@ async function deleteSavedPet(req, res, next) {
 async function fetchUsersPets(req, res, next) {
     try{
         const {id} = req.params
+        console.log(id)
         const usersPets = await petsModel.GetPetsByUserId({userid: id})
         res.send(usersPets)
     } catch (err) {
         next(err)
     }
 }
-
 
 
 export default {addNewPet, editPet, fetchPets, adoptOrFoster, returnPet, savePet, deleteSavedPet, fetchUsersPets, fetchPetById}
