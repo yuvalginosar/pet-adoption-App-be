@@ -3,7 +3,8 @@ import petsModel from '../models/petsModels.js'
 
 async function addNewPet(req, res, next) {
     try{
-        const newPet = {
+        const newPet = 
+        {
             type: req.body.type,
             name: req.body.name,
             adoption_status: req.body.adoptionStatus,
@@ -14,6 +15,7 @@ async function addNewPet(req, res, next) {
             bio: req.body.bio,
             hypoallergenic: req.body.hypoallergnic,
             breed: req.body.breed,
+            dietary_restrictions: req.body.petDietary
         }
         const pet = await petsModel.addPet(newPet)
         res.send(pet)
@@ -21,6 +23,8 @@ async function addNewPet(req, res, next) {
         next(err)
     }
 }
+
+
 
 async function editPet(req, res, next) {
     try{

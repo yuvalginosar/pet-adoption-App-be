@@ -1,10 +1,19 @@
 import knex from 'knex'
 import {petsAppDb} from '../server.js'
 
+// async function addPet(newPet, dietary) {
+//     try{    
+//         const queryResult  = await petsAppDb.from('pets').insert(newPet)
+//         const newPetRestrictions = 
+//         return queryResult 
+//     } catch(err){
+//         console.log(err)
+//     }
+// }
 async function addPet(newPet) {
     try{    
-        const queryResult  = await petsAppDb.from('pets').insert(newPet)
-        return queryResult 
+        const [queryResult]  = await petsAppDb.from('pets').insert(newPet)
+        console.log(queryResult) 
     } catch(err){
         console.log(err)
     }
