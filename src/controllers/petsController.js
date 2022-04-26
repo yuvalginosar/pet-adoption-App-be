@@ -1,8 +1,17 @@
 import petsModel from '../models/petsModels.js'
-
+import { v2 as cloudinary } from 'cloudinary'
+import { unlink } from 'fs/promises';
 
 async function addNewPet(req, res, next) {
     try{
+        const cloudinaryPath = await cloudinary.uploader.upload(req.file.path)
+        console.log(cloudinaryPath)
+        try {
+            await unlink(req.file.path);
+            console.log('successfully deleted ');
+          } catch (error) {
+            console.error('there was an error:', error.message);
+          }
         const newPet = 
         {
             type: req.body.type,
@@ -15,7 +24,10 @@ async function addNewPet(req, res, next) {
             bio: req.body.bio,
             hypoallergenic: req.body.hypoallergnic,
             breed: req.body.breed,
-            dietary_restrictions: req.body.petDietary
+            dietary_restrictions: req.body.petDietary,
+            // picture: req.file ? process.env.HOST + "/" + req.file.path : null,
+            picture: cloudinaryPath ? cloudinaryPath.secure_url : null
+
         }
         const pet = await petsModel.addPet(newPet)
         res.send(pet)

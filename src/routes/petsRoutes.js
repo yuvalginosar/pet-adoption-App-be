@@ -1,13 +1,19 @@
 import express from "express"
+import "dotenv/config";
 import petsController from "../controllers/petsController.js";
-
+import multer from "multer";
+const upload = multer({ dest: process.env.UPLOAD_FOLDER + "/" });
 
 const router = express.Router()
 
+// router
+//   .route("/")
+//   .get(petsController.fetchPets)
+//   .post(petsController.addNewPet)
 router
   .route("/")
   .get(petsController.fetchPets)
-  .post(petsController.addNewPet)
+  .post( upload.single("image"), petsController.addNewPet)
 
   router
   .route("/:id")

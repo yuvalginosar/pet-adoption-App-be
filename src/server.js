@@ -8,9 +8,14 @@ import userRoutes from "./routes/userRoutes.js";
 import knexConfig from "./data/knexfile.js";
 import knex from "knex";
 
+
+
 const petsAppDb = knex(knexConfig);
 const app = new express();
-
+app.use(
+  `/${process.env.UPLOAD_FOLDER}`,
+  express.static(process.env.UPLOAD_FOLDER)
+);
 app.use(express.json());
 app.use(cors());
 

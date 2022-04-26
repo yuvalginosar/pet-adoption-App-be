@@ -1,4 +1,5 @@
 import authModel from '../models/authModel.js'
+import bcrypt from 'bcrypt';
 
 async function signUpNewUser(req, res, next) {
     try{
@@ -6,11 +7,12 @@ async function signUpNewUser(req, res, next) {
             first_name: req.body.firstName, 
             last_name: req.body.lastName, 
             phone: req.body.phoneNumber, 
-            password: req.body.pwd, 
+            password: await bcrypt.hash(req.body.pwd, 10), 
             email: req.body.email
         }
         const user = await authModel.addUser(newUser)
-        res.send(user)
+        delete newUser.password
+        res.send(newUser)
     } catch (err) {
         next(err)
     }

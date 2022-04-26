@@ -6,7 +6,7 @@ const router = express.Router()
 
 router
   .route("/")
-  .post( signupController.signUpNewUser)
+  .post(signupController.signUpNewUser)
 
 
 
