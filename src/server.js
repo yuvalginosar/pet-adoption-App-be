@@ -36,4 +36,4 @@ petsAppDb
   })
   .catch(err => console.log(err))
 
-  export {petsAppDb}
+  export default petsAppDb

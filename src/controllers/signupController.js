@@ -11,8 +11,8 @@ async function signUpNewUser(req, res, next) {
             email: req.body.email
         }
         const user = await authModel.addUser(newUser)
-        delete newUser.password
-        res.send(newUser)
+        delete user.password
+        res.send(user)
     } catch (err) {
         next(err)
     }

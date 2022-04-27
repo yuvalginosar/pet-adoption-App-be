@@ -1,5 +1,5 @@
 import knex from 'knex'
-import {petsAppDb} from '../server.js'
+import petsAppDb from '../server.js'
 
 // async function addPet(newPet, dietary) {
 //     try{    
@@ -18,6 +18,9 @@ async function addPet(newPet) {
         console.log(err)
     }
 }
+
+
+
 
 // async function GetPetById(id) {
 //     try{    
