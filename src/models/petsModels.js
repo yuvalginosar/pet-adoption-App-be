@@ -42,6 +42,8 @@ async function GetPets(filter) {
         .select('user_pets.status', 'user_pets.userid','pets.*')
         .leftJoin('user_pets', 'pets.id', 'user_pets.petid')
         return queryResult 
+
+        return queryResult 
     } catch(err){
         console.log(err)
     }

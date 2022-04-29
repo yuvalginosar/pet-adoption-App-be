@@ -7,6 +7,7 @@ import loginRoutes from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import knexConfig from "./data/knexfile.js";
 import knex from "knex";
+import cookieParser from "cookie-parser";
 
 
 
@@ -17,7 +18,8 @@ app.use(
   express.static(process.env.UPLOAD_FOLDER)
 );
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
+app.use(cookieParser());
 
 app.use("/pet", petsRoutes);
 app.use("/signup", signupRoutes);

@@ -14,6 +14,7 @@ async function loginUser(req, res, next) {
         const token = jwt.sign({id: user.id}, process.env.JWT_SECRET);
         // delete user.id
         res.cookie("token", token, { httpOnly: true });
+        console.log(user)
         res.send({ user, token });
     } catch (err) {
         res.status(500).send(err);

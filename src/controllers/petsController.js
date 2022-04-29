@@ -49,6 +49,7 @@ async function editPet(req, res, next) {
 
 async function fetchPets(req, res, next) {
     try{
+        console.log(req.user)
         const q = req.query;
         const fetchedPets = await petsModel.GetPets(q)
         res.send(fetchedPets)

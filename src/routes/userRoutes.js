@@ -1,5 +1,6 @@
 import express from "express"
 import userControllers from "../controllers/userControllers.js";
+import authenticated from "../middlewares/authenticated.js";
 
 
 const router = express.Router()
@@ -11,7 +12,7 @@ router
 router
   .route("/:id")
   .get(userControllers.fetchUserById)
-  .put(userControllers.editProfile);
+  .put(authenticated, userControllers.editProfile);
 
 router
   .route("/:id/full")

@@ -2,6 +2,8 @@ import express from "express"
 import "dotenv/config";
 import petsController from "../controllers/petsController.js";
 import multer from "multer";
+import authenticated from "../middlewares/authenticated.js";
+
 const upload = multer({ dest: process.env.UPLOAD_FOLDER + "/" });
 
 const router = express.Router()
@@ -12,7 +14,7 @@ const router = express.Router()
 //   .post(petsController.addNewPet)
 router
   .route("/")
-  .get(petsController.fetchPets)
+  .get(authenticated, petsController.fetchPets)
   .post( upload.single("image"), petsController.addNewPet)
 
   router
@@ -22,16 +24,16 @@ router
 
   router
   .route("/:id/adopt")
-  .post(petsController.adoptOrFoster)
+  .post(authenticated, petsController.adoptOrFoster)
 
   router
   .route("/:id/return")
-  .post(petsController.returnPet)
+  .post(authenticated, petsController.returnPet)
 
   router
   .route("/:id/save")
-  .post(petsController.savePet)
-  .delete(petsController.deleteSavedPet)
+  .post(authenticated, petsController.savePet)
+  .delete(authenticated, petsController.deleteSavedPet)
 
   router
   .route('/user/:id')
