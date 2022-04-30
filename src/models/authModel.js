@@ -34,4 +34,15 @@ async function editUser(id, detailsToEdit) {
     }
 }
 
-export default {getUserByEmail, addUser, editUser}
+async function getUsers(id) {
+    try{    
+        const users = await petsAppDb('users').where(id)
+        .select('id', 'first_name', 'last_name', 'email', 'phone', 'is_admin')
+        return users
+    } catch(err){
+        console.log(err)
+    }
+}
+
+
+export default {getUserByEmail, addUser, editUser, getUsers}
