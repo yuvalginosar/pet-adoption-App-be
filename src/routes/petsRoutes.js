@@ -20,7 +20,7 @@ router
   router
   .route("/:id")
   .get(petsController.fetchPetById)
-  .put(petsController.editPet);
+  .put(upload.single("image"), petsController.editPet);
 
   router
   .route("/:id/adopt")
