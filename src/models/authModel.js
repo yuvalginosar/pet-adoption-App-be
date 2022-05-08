@@ -34,15 +34,26 @@ async function editUser(id, detailsToEdit) {
     }
 }
 
-async function getUsers(id) {
+async function getUsers() {
     try{    
-        const users = await petsAppDb('users').where(id)
+        const users = await petsAppDb('users')
         .select('id', 'first_name', 'last_name', 'email', 'phone', 'is_admin')
+        console.log(users, 'ani getUsers!')
+
         return users
     } catch(err){
         console.log(err)
     }
 }
+async function getUserById(id) {
+    try {
+    const user = await petsAppDb.from("users").where({ id }).first();
+    console.log(user, 'ani getUserById!')
 
+      return user;
+    } catch (error){
+        console.log(error)
+    }
+  }
 
-export default {getUserByEmail, addUser, editUser, getUsers}
+export default {getUserByEmail, addUser, editUser, getUsers, getUserById}

@@ -15,7 +15,7 @@ async function verifyNewUser(req, res, next) {
         const { email } = req.body;
         const user = await authModel.getUserByEmail(email);
       if (user) {
-        res.status(400).send('User already exists');
+        res.status(400).send( "User already exists");
         return;
       }
       next();

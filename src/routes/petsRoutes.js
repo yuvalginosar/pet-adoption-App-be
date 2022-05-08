@@ -3,7 +3,9 @@ import "dotenv/config";
 import petsController from "../controllers/petsController.js";
 import multer from "multer";
 import authenticated from "../middlewares/authenticated.js";
-
+import bodyValidation from "../middlewares/bodyValidation.js";
+import { newPetSchema, editPetSchema } from "../data/petSchema.js";
+import adminAuthentication from '../middlewares/isAdmin.js'
 const upload = multer({ dest: process.env.UPLOAD_FOLDER + "/" });
 
 const router = express.Router()
@@ -14,13 +16,13 @@ const router = express.Router()
 //   .post(petsController.addNewPet)
 router
   .route("/")
-  .get(authenticated, petsController.fetchPets)
-  .post( upload.single("image"), petsController.addNewPet)
+  .get(petsController.fetchPets)
+  .post(authenticated, adminAuthentication, upload.single("image"), bodyValidation(newPetSchema), petsController.addNewPet)
 
   router
   .route("/:id")
   .get(petsController.fetchPetById)
-  .put(upload.single("image"), petsController.editPet);
+  .put(authenticated,adminAuthentication, upload.single("image"),bodyValidation(editPetSchema), petsController.editPet);
 
   router
   .route("/:id/adopt")
@@ -39,5 +41,8 @@ router
   .route('/user/:id')
   .get(petsController.fetchUsersPets)
 
+  router
+  .route('/:petId/user/:userId')
+  .get(petsController.getStatusByIds)
 
 export default router;

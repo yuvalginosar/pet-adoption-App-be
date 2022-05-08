@@ -29,12 +29,14 @@ async function addNewPet(req, res, next) {
       // picture: req.file ? process.env.HOST + "/" + req.file.path : null,
       picture: cloudinaryPath ? cloudinaryPath.secure_url : null,
     };
-    if (req.body.hypoallergenic === 'false') newPet.hypoallergenic = false
-    else if (req.body.hypoallergenic === 'true') newPet.hypoallergenic = true
+    if (req.body.hypoallergenic === "false") newPet.hypoallergenic = false;
+    else if (req.body.hypoallergenic === "true") newPet.hypoallergenic = true;
     const pet = await petsModel.addPet(newPet);
     res.send(pet);
+    // console.log(req.body, typeof req.body)
+    // res.send(newPet)
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -43,7 +45,6 @@ async function editPet(req, res, next) {
     let cloudinaryPath;
     if (req.file) {
       cloudinaryPath = await cloudinary.uploader.upload(req.file.path);
-      console.log(cloudinaryPath);
       try {
         await unlink(req.file.path);
         console.log("successfully deleted ");
@@ -52,10 +53,11 @@ async function editPet(req, res, next) {
       }
     }
     const { id } = req.params;
-    console.log(id);
     const detailsToEdit = req.body;
-    if (detailsToEdit.hypoallergenic === 'false') detailsToEdit.hypoallergenic = false
-    else if (detailsToEdit.hypoallergenic === 'true') detailsToEdit.hypoallergenic = true
+    if (detailsToEdit.hypoallergenic === "false")
+      detailsToEdit.hypoallergenic = false;
+    else if (detailsToEdit.hypoallergenic === "true")
+      detailsToEdit.hypoallergenic = true;
     delete detailsToEdit.image;
     cloudinaryPath ? (detailsToEdit.picture = cloudinaryPath.secure_url) : null;
     // const newPet = JSON.stringify(req.body)
@@ -63,7 +65,7 @@ async function editPet(req, res, next) {
     const pet = await petsModel.modPet(id, detailsToEdit);
     res.send(pet);
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -74,15 +76,16 @@ async function fetchPets(req, res, next) {
     const fetchedPets = await petsModel.GetPets(q);
     res.send(fetchedPets);
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 async function fetchPetById(req, res, next) {
   try {
     const { id } = req.params;
-    const pet = await petsModel.GetPets({ "pets.id": id });
+    const pet = await petsModel.GetPetById(id);
     res.send(pet);
   } catch (err) {
+    res.status(500).send(err.message);
     next(err);
   }
 }
@@ -101,7 +104,7 @@ async function adoptOrFoster(req, res, next) {
     const action = await petsModel.addPetToUser(aloPet, currStatus);
     res.send({ action });
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -112,7 +115,7 @@ async function returnPet(req, res, next) {
     const action = await petsModel.RemovePetFromUser(petId, userId);
     res.send("returned succefully");
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -129,7 +132,7 @@ async function savePet(req, res, next) {
     const action = await petsModel.addSavedPetToUser(savePetDetails);
     res.send({ petid, userid });
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -145,7 +148,7 @@ async function deleteSavedPet(req, res, next) {
     const action = await petsModel.removeSavedPet(petToDelete);
     res.send({ petId, userId });
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
 
@@ -156,10 +159,19 @@ async function fetchUsersPets(req, res, next) {
     const usersPets = await petsModel.GetPetsByUserId({ userid: id });
     res.send(usersPets);
   } catch (err) {
-    next(err);
+    res.status(500).send(err.message);
   }
 }
-
+async function getStatusByIds(req, res, next) {
+  try {
+    const petId = req.params.petId;
+    const userId = req.params.userId;
+    const status = await petsModel.GetPetStatusByUserAndPetId(userId, petId);
+    res.send(status);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
 export default {
   addNewPet,
   editPet,
@@ -170,4 +182,5 @@ export default {
   deleteSavedPet,
   fetchUsersPets,
   fetchPetById,
+  getStatusByIds
 };

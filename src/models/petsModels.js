@@ -16,23 +16,22 @@ async function addPet(newPet) {
     console.log(queryResult);
   } catch (err) {
     console.log(err);
-
-
-
-
-
-    
   }
 }
 
-// async function GetPetById(id) {
-//     try{
-//         const queryResult  = await petsAppDb.from('pets').where({id: id})
-//         return queryResult
-//     } catch(err){
-//         console.log(err)
-//     }
-// }
+async function GetPetById(id) {
+  try {
+    const queryResult = await petsAppDb
+      .from("pets")
+      .where({ "pets.id": id })
+    //   .select("user_pets.status", "user_pets.userid", "pets.*")
+    //   .leftJoin("user_pets", "pets.id", "user_pets.petid");
+    // console.log(queryResult, "GetPetById");
+    return queryResult;
+  } catch (err) {
+    console.log(err);
+  }
+}
 async function GetPets(filter) {
   // try{
   //     const queryResult  = await petsAppDb.from('pets').where(filter)
@@ -44,10 +43,8 @@ async function GetPets(filter) {
     const queryResult = await petsAppDb
       .from("pets")
       .where(filter)
-      .select("user_pets.status", "user_pets.userid", "pets.*")
-      .leftJoin("user_pets", "pets.id", "user_pets.petid");
-    return queryResult;
-
+    //   .select("user_pets.status", "user_pets.userid", "pets.*")
+    //   .leftJoin("user_pets", "pets.id", "user_pets.petid");
     return queryResult;
   } catch (err) {
     console.log(err);
@@ -67,9 +64,16 @@ function AlterAdoptionStatus(action) {
   }
   return adoption_status;
 }
+async function deletePetFromUsersDb(id) {
+    return petsAppDb
+        .from("user_pets")
+        .where({ petid: id })
+        .del();
+    
+}
 async function addPetToUser(aloPet, currStatus) {
   try {
-    console.log(currStatus);
+    if(aloPet.status === 'adopt') await deletePetFromUsersDb(aloPet.petid);
     const petMod = await petsAppDb
       .from("pets")
       .where({ id: aloPet.petid })
@@ -151,6 +155,19 @@ async function modPet(id, detailsToEdit) {
     console.log(err);
   }
 }
+
+async function GetPetStatusByUserAndPetId(userId, petId) {
+    try {
+      const queryResult = await petsAppDb
+        .from("user_pets")
+        .select("user_pets.status")
+        .where({userid: userId, petid: petId});
+      console.log(queryResult, "GetPetStatusByUserAndPetId");
+      return queryResult;
+    } catch (err) {
+      console.log(err);
+    }
+  }
 export default {
   addPet,
   GetPets,
@@ -160,4 +177,6 @@ export default {
   removeSavedPet,
   RemovePetFromUser,
   modPet,
+  GetPetById,
+  GetPetStatusByUserAndPetId
 };

@@ -11,11 +11,11 @@ async function loginUser(req, res, next) {
             return;
         }
         delete user.password;
-        const token = jwt.sign({id: user.id}, process.env.JWT_SECRET);
+        const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, { expiresIn: '1h' });
         // delete user.id
         res.cookie("token", token, { httpOnly: true });
         console.log(user)
-        res.send({ user, token });
+        res.send({ user});
     } catch (err) {
         res.status(500).send(err);
     }

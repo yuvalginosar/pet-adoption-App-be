@@ -6,10 +6,7 @@ function authenticated(req, res, next) {
     //   ? req.headers.authorization.replace("Bearer ", "")
     //   : null;
     const token = req.cookies.token;
-    console.log('test', token)
-
     const authenticatedUser = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(authenticatedUser, 'hi')
     req.user = authenticatedUser;
     next();
   } catch (err) {
