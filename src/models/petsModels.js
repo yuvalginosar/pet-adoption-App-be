@@ -1,15 +1,6 @@
 import knex from "knex";
 import petsAppDb from "../server.js";
-
-// async function addPet(newPet, dietary) {
-//     try{
-//         const queryResult  = await petsAppDb.from('pets').insert(newPet)
-//         const newPetRestrictions =
-//         return queryResult
-//     } catch(err){
-//         console.log(err)
-//     }
-// }
+ 
 async function addPet(newPet) {
   try {
     const [queryResult] = await petsAppDb.from("pets").insert(newPet);
@@ -21,30 +12,15 @@ async function addPet(newPet) {
 
 async function GetPetById(id) {
   try {
-    const queryResult = await petsAppDb
-      .from("pets")
-      .where({ "pets.id": id })
-    //   .select("user_pets.status", "user_pets.userid", "pets.*")
-    //   .leftJoin("user_pets", "pets.id", "user_pets.petid");
-    // console.log(queryResult, "GetPetById");
+    const queryResult = await petsAppDb.from("pets").where({ "pets.id": id });
     return queryResult;
   } catch (err) {
     console.log(err);
   }
 }
 async function GetPets(filter) {
-  // try{
-  //     const queryResult  = await petsAppDb.from('pets').where(filter)
-  //     return queryResult
-  // } catch(err){
-  //     console.log(err)
-  // }
   try {
-    const queryResult = await petsAppDb
-      .from("pets")
-      .where(filter)
-    //   .select("user_pets.status", "user_pets.userid", "pets.*")
-    //   .leftJoin("user_pets", "pets.id", "user_pets.petid");
+    const queryResult = await petsAppDb.from("pets").where(filter);
     return queryResult;
   } catch (err) {
     console.log(err);
@@ -65,20 +41,16 @@ function AlterAdoptionStatus(action) {
   return adoption_status;
 }
 async function deletePetFromUsersDb(id) {
-    return petsAppDb
-        .from("user_pets")
-        .where({ petid: id })
-        .del();
-    
+  return petsAppDb.from("user_pets").where({ petid: id }).del();
 }
 async function addPetToUser(aloPet, currStatus) {
   try {
-    if(aloPet.status === 'adopt') await deletePetFromUsersDb(aloPet.petid);
     const petMod = await petsAppDb
       .from("pets")
       .where({ id: aloPet.petid })
       .update({ adoption_status: AlterAdoptionStatus(aloPet.status) });
-    if (!currStatus) {
+    if (aloPet.status === "adopt") {
+      await deletePetFromUsersDb(aloPet.petid);
       const queryResult = await petsAppDb.from("user_pets").insert(aloPet);
       return queryResult;
     } else {
@@ -114,7 +86,6 @@ async function GetPetsByUserId(userId) {
       .join("pets", "user_pets.petid", "pets.id")
       .select("user_pets.status", "pets.*")
       .where(userId);
-    console.log(queryResult);
     return queryResult;
   } catch (err) {
     console.log(err);
@@ -157,17 +128,16 @@ async function modPet(id, detailsToEdit) {
 }
 
 async function GetPetStatusByUserAndPetId(userId, petId) {
-    try {
-      const queryResult = await petsAppDb
-        .from("user_pets")
-        .select("user_pets.status")
-        .where({userid: userId, petid: petId});
-      console.log(queryResult, "GetPetStatusByUserAndPetId");
-      return queryResult;
-    } catch (err) {
-      console.log(err);
-    }
+  try {
+    const queryResult = await petsAppDb
+      .from("user_pets")
+      .select("user_pets.status")
+      .where({ userid: userId, petid: petId });
+    return queryResult;
+  } catch (err) {
+    console.log(err);
   }
+}
 export default {
   addPet,
   GetPets,
@@ -178,5 +148,5 @@ export default {
   RemovePetFromUser,
   modPet,
   GetPetById,
-  GetPetStatusByUserAndPetId
+  GetPetStatusByUserAndPetId,
 };

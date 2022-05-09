@@ -7,7 +7,6 @@ async function addNewPet(req, res, next) {
     let cloudinaryPath;
     if (req.file) {
       cloudinaryPath = await cloudinary.uploader.upload(req.file.path);
-      console.log(cloudinaryPath);
       try {
         await unlink(req.file.path);
         console.log("successfully deleted ");
@@ -26,15 +25,17 @@ async function addNewPet(req, res, next) {
       bio: req.body.bio,
       breed: req.body.breed,
       dietary_restrictions: req.body.petDietary,
-      // picture: req.file ? process.env.HOST + "/" + req.file.path : null,
       picture: cloudinaryPath ? cloudinaryPath.secure_url : null,
     };
     if (req.body.hypoallergenic === "false") newPet.hypoallergenic = false;
     else if (req.body.hypoallergenic === "true") newPet.hypoallergenic = true;
     const pet = await petsModel.addPet(newPet);
-    res.send(pet);
-    // console.log(req.body, typeof req.body)
-    // res.send(newPet)
+    if (!pet) {
+      throw new Error
+    }
+    else {
+      res.status(201).send('successfully added');
+    }
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -45,23 +46,18 @@ async function editPet(req, res, next) {
     let cloudinaryPath;
     if (req.file) {
       cloudinaryPath = await cloudinary.uploader.upload(req.file.path);
-      try {
-        await unlink(req.file.path);
-        console.log("successfully deleted ");
-      } catch (error) {
-        console.error("there was an error:", error.message);
-      }
+      await unlink(req.file.path);
     }
     const { id } = req.params;
     const detailsToEdit = req.body;
-    if (detailsToEdit.hypoallergenic === "false")
+    if (detailsToEdit.hypoallergenic === "false") {
       detailsToEdit.hypoallergenic = false;
-    else if (detailsToEdit.hypoallergenic === "true")
+    }
+    else if (detailsToEdit.hypoallergenic === "true") {
       detailsToEdit.hypoallergenic = true;
+    }
     delete detailsToEdit.image;
     cloudinaryPath ? (detailsToEdit.picture = cloudinaryPath.secure_url) : null;
-    // const newPet = JSON.stringify(req.body)
-    console.log(detailsToEdit);
     const pet = await petsModel.modPet(id, detailsToEdit);
     res.send(pet);
   } catch (err) {
@@ -71,7 +67,6 @@ async function editPet(req, res, next) {
 
 async function fetchPets(req, res, next) {
   try {
-    console.log(req.user);
     const q = req.query;
     const fetchedPets = await petsModel.GetPets(q);
     res.send(fetchedPets);
@@ -100,7 +95,6 @@ async function adoptOrFoster(req, res, next) {
       petid,
       status: type,
     };
-    console.log(petid, userid, currStatus);
     const action = await petsModel.addPetToUser(aloPet, currStatus);
     res.send({ action });
   } catch (err) {
@@ -128,7 +122,6 @@ async function savePet(req, res, next) {
       petid,
       status: "save",
     };
-    console.log(savePetDetails);
     const action = await petsModel.addSavedPetToUser(savePetDetails);
     res.send({ petid, userid });
   } catch (err) {
@@ -140,7 +133,6 @@ async function deleteSavedPet(req, res, next) {
   try {
     const petId = req.params.id;
     const userId = req.body.id;
-    console.log(userId);
     const petToDelete = {
       petId,
       userId,
@@ -155,7 +147,6 @@ async function deleteSavedPet(req, res, next) {
 async function fetchUsersPets(req, res, next) {
   try {
     const { id } = req.params;
-    console.log(id);
     const usersPets = await petsModel.GetPetsByUserId({ userid: id });
     res.send(usersPets);
   } catch (err) {
