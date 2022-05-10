@@ -12,7 +12,6 @@ router
 
 router
   .route("/:id")
-  // .get(userControllers.fetchUserById)
   .put(authenticated, userControllers.editProfile);
 
 router

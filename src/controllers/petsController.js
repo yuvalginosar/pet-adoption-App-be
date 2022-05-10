@@ -31,10 +31,9 @@ async function addNewPet(req, res, next) {
     else if (req.body.hypoallergenic === "true") newPet.hypoallergenic = true;
     const pet = await petsModel.addPet(newPet);
     if (!pet) {
-      throw new Error
-    }
-    else {
-      res.status(201).send('successfully added');
+      throw new Error();
+    } else {
+      res.status(201).send("successfully added");
     }
   } catch (err) {
     res.status(500).send(err.message);
@@ -52,8 +51,7 @@ async function editPet(req, res, next) {
     const detailsToEdit = req.body;
     if (detailsToEdit.hypoallergenic === "false") {
       detailsToEdit.hypoallergenic = false;
-    }
-    else if (detailsToEdit.hypoallergenic === "true") {
+    } else if (detailsToEdit.hypoallergenic === "true") {
       detailsToEdit.hypoallergenic = true;
     }
     delete detailsToEdit.image;
@@ -69,6 +67,9 @@ async function fetchPets(req, res, next) {
   try {
     const q = req.query;
     const fetchedPets = await petsModel.GetPets(q);
+    if (!fetchedPets) {
+      return res.status(404).send();
+    }
     res.send(fetchedPets);
   } catch (err) {
     res.status(500).send(err.message);
@@ -78,10 +79,12 @@ async function fetchPetById(req, res, next) {
   try {
     const { id } = req.params;
     const pet = await petsModel.GetPetById(id);
+    if (!pet) {
+      return res.status(404).send();
+    }
     res.send(pet);
   } catch (err) {
     res.status(500).send(err.message);
-    next(err);
   }
 }
 async function adoptOrFoster(req, res, next) {
@@ -96,7 +99,10 @@ async function adoptOrFoster(req, res, next) {
       status: type,
     };
     const action = await petsModel.addPetToUser(aloPet, currStatus);
-    res.send({ action });
+    if (!action) {
+      return res.status(400).send();
+    }
+    res.status(201).send("added succefully");
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -107,7 +113,10 @@ async function returnPet(req, res, next) {
     const petId = req.params.id;
     const userId = req.body.id;
     const action = await petsModel.RemovePetFromUser(petId, userId);
-    res.send("returned succefully");
+    if (!action) {
+      return res.status(400).send();
+    }
+    res.status(201).send("returned succefully");
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -123,7 +132,10 @@ async function savePet(req, res, next) {
       status: "save",
     };
     const action = await petsModel.addSavedPetToUser(savePetDetails);
-    res.send({ petid, userid });
+    if (!action) {
+      return res.status(400).send();
+    }
+    res.status(201).send("saved succefully");
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -138,7 +150,10 @@ async function deleteSavedPet(req, res, next) {
       userId,
     };
     const action = await petsModel.removeSavedPet(petToDelete);
-    res.send({ petId, userId });
+    if (!action) {
+      return res.status(400).send();
+    }
+    res.status(201).send("deleted succefully");
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -148,6 +163,9 @@ async function fetchUsersPets(req, res, next) {
   try {
     const { id } = req.params;
     const usersPets = await petsModel.GetPetsByUserId({ userid: id });
+    if (!usersPets) {
+      return res.status(404).send();
+    }
     res.send(usersPets);
   } catch (err) {
     res.status(500).send(err.message);
@@ -158,6 +176,9 @@ async function getStatusByIds(req, res, next) {
     const petId = req.params.petId;
     const userId = req.params.userId;
     const status = await petsModel.GetPetStatusByUserAndPetId(userId, petId);
+    if (!status) {
+      return res.status(404).send();
+    }
     res.send(status);
   } catch (err) {
     res.status(500).send(err.message);
@@ -173,5 +194,5 @@ export default {
   deleteSavedPet,
   fetchUsersPets,
   fetchPetById,
-  getStatusByIds
+  getStatusByIds,
 };

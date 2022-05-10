@@ -11,6 +11,9 @@ async function signUpNewUser(req, res, next) {
       email: req.body.email,
     };
     const user = await authModel.addUser(newUser);
+    if (!user) {
+      return res.status(400).send();
+    }
     delete user.password;
     res.send(user);
   } catch (err) {
