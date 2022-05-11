@@ -10,10 +10,7 @@ const upload = multer({ dest: process.env.UPLOAD_FOLDER + "/" });
 
 const router = express.Router()
 
-// router
-//   .route("/")
-//   .get(petsController.fetchPets)
-//   .post(petsController.addNewPet)
+
 router
   .route("/")
   .get(petsController.fetchPets)

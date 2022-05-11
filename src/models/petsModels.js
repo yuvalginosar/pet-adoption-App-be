@@ -48,14 +48,12 @@ async function addPetToUser(aloPet, currStatus) {
         .update({ status: aloPet.status });
       return queryResult;
     } else {
-      const newAction = await petsAppDb
-        .from("user_pets")
-        .insert({
-          petid: aloPet.petid,
-          userid: aloPet.userid,
-          status: aloPet.status,
-        });
-        return newAction
+      const newAction = await petsAppDb.from("user_pets").insert({
+        petid: aloPet.petid,
+        userid: aloPet.userid,
+        status: aloPet.status,
+      });
+      return newAction;
     }
   }
 }
@@ -85,7 +83,6 @@ async function addSavedPetToUser(savePetDetails) {
 }
 
 async function removeSavedPet(petToDelete) {
-  console.log(petToDelete.petId, petToDelete.userId);
   const queryResult = await petsAppDb
     .from("user_pets")
     .where({ petid: petToDelete.petId, userid: petToDelete.userId })

@@ -14,7 +14,6 @@ async function fetchUsers(req, res, next) {
   }
 }
 
-
 async function editProfile(req, res, next) {
   try {
     const id = req.user.id;
