@@ -32,7 +32,7 @@ async function getUserById(id) {
   const user = await petsAppDb
     .from("users")
     .where({ id })
-    .select("id", "first_name", "last_name", "email", "phone", "is_admin")
+    .select("id", "first_name", "last_name", "email", "phone", "is_admin", "bio")
     .first();
   return user;
 }

@@ -8,11 +8,12 @@ import userRoutes from "./routes/userRoutes.js";
 import knexConfig from "./data/knexfile.js";
 import knex from "knex";
 import cookieParser from "cookie-parser";
-
+import pino from 'pino-http'
 
 
 const petsAppDb = knex(knexConfig);
 const app = new express();
+app.use(pino({level: process.env.LOG_LEVEL}))
 app.use(
   `/${process.env.UPLOAD_FOLDER}`,
   express.static(process.env.UPLOAD_FOLDER)
