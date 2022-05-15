@@ -12,7 +12,11 @@ async function loginUser(req, res, next) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    });
     res.send({ user });
   } catch (err) {
     res.status(500).send(err);
